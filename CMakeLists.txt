@@ -55,7 +55,11 @@ FetchContent_MakeAvailable(json)
 # file(COPY <TODO: dir> DESTINATION ${CMAKE_BINARY_DIR})
 
 set(${PROJECT_NAME}_SOURCES
-main.cpp
+    main.cpp
+    PostHandler.h
+    PostHandler.cpp
+    GetHandler.h
+    GetHandler.cpp
 )
 
 # Create default binaries.

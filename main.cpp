@@ -4,6 +4,9 @@
 #include <nlohmann/json.hpp>
 #include <thread>
 
+#include "GetHandler.h"
+#include "PostHandler.h"
+
 namespace
 {
 httplib::Params createParamsForGetCall()
@@ -17,17 +20,17 @@ httplib::Params createParamsForGetCall()
 
 nlohmann::json createPayloadForPostCall()
 {
-    nlohmann::json payload;
-    payload["values"] = {1, 2, 3, 4};
+    nlohmann::json payload = nlohmann::json::object();
     payload["date"] = 1713897600;
+    payload["values"] = {1, 2, 3, 4};
     return payload;
 }
 
-auto getTestingClient()
+auto getTestingClient(const std::string& address, int port)
 {
-    return []()
+    return [port, address]()
     {
-        httplib::Client client("0.0.0.0", 8080);
+        httplib::Client client(address, port);
         for (int i{0}; i < 1; ++i)
         {
             std::cout << "Client: GET sending" << std::endl;
@@ -39,7 +42,8 @@ auto getTestingClient()
             std::this_thread::sleep_for(std::chrono::seconds(1));
 
             std::cout << "Client: POST sending" << std::endl;
-            nlohmann::json payload{createPayloadForPostCall()};
+            nlohmann::json payload = createPayloadForPostCall();
+            std::cout << "Client: body: " << payload.dump() << std::endl;
             res =
                 client.Post("/paths/start", payload.dump(), "application/json");
             std::cout << "Client: POST Reply code=" << res->status
@@ -51,66 +55,30 @@ auto getTestingClient()
 
 int main()
 {
-    std::cout << "Starting..." << std::endl;
+    std::cout << "Starting server..." << std::endl;
+
+    std::string address("0.0.0.0");
+    const int port{8080};
+
+    using httplib::Request;
+    using httplib::Response;
 
     httplib::Server svr;
 
+    GetHandler getHandler;
     svr.Get("/paths/:event/mean",
-            [](const httplib::Request& req, httplib::Response& res)
-            {
-                std::string event{req.path_params.at("event")};
-                std::cout << "SERVER: " << req.path << " " << event << " "
-                          << req.body << std::endl;
+            [&handler = getHandler](const Request& req, Response& res)
+            { handler.processEvent(req, res); });
 
-                if (req.has_param("resultUnit"))
-                {
-                    std::cout << "SERVER: resultUnit: "
-                              << req.get_param_value("resultUnit") << std::endl;
-                }
-                if (req.has_param("startTimestamp"))
-                {
-                    std::cout << "SERVER: startTimestamp: "
-                              << req.get_param_value("startTimestamp")
-                              << std::endl;
-                }
-                if (req.has_param("endTimestamp"))
-                {
-                    std::cout << "SERVER: endTimestamp: "
-                              << req.get_param_value("endTimestamp")
-                              << std::endl;
-                }
-                // std::string key = req.get_param_value("key");
-                // std::string count = req.get_param_value("count");
-                // std::cout << "SERVER: Key: " << key << " Count: " << count
-                //           << std::endl;
-
-                nlohmann::json body;
-                body["mean"] = 34;
-                res.set_content(body.dump(4), "application/json");
-            });
-
+    PostHandler postHandler;
     svr.Post("/paths/:event",
-             [](const httplib::Request& req, httplib::Response& res)
-             {
-                 std::string event{req.path_params.at("event")};
-                 std::cout << "SERVER: " << req.path << " " << event << " "
-                           << req.body << std::endl;
+             [&handler = postHandler](const Request& req, Response& res)
+             { handler.processEvent(req, res); });
 
-                 nlohmann::json parsedData = nlohmann::json::parse(req.body);
-                 std::cout << "Values: ";
-                 for (int num : parsedData["values"])
-                 {
-                     std::cout << num << " ";
-                 }
-                 std::cout << "\nDate: " << parsedData["date"] << std::endl;
+    auto server{std::async([&svr, address]() { svr.listen(address, port); })};
 
-                 res.status = httplib::StatusCode::OK_200;
-                 res.set_content("{}", "application/json");
-             });
-
-    auto server{std::async([&svr]() { svr.listen("0.0.0.0", 8080); })};
-
-    auto testClient{std::async(std::launch::async, getTestingClient())};
+    auto testClient{
+        std::async(std::launch::async, getTestingClient(address, port))};
 
     // clang-format off
     // curl -X GET --json ''  "localhost:8080/paths/start/mean?resultUnit=seconds&startTimestamp=11&endTimestamp=13"
