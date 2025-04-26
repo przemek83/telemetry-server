@@ -98,7 +98,7 @@ std::pair<bool, int> PostHandler::parseDate(const nlohmann::json& parsedData,
 bool PostHandler::isValidEventName(const std::string& event)
 {
     return !event.empty() &&
-           std::all_of(event.begin(), event.end(),
+           std::all_of(event.cbegin(), event.cend(),
                        [](unsigned char c) { return std::isalnum(c); });
 }
 void PostHandler::raiseError(httplib::Response& res,
