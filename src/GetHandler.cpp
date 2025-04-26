@@ -58,5 +58,6 @@ void GetHandler::processEvent(const httplib::Request& req,
     int value{telemetry_.computeMean(event, startDate, endDate)};
     body["mean"] = value;
     // std::cout << "SERVER: value: " << value << std::endl;
-    res.set_content(body.dump(4), "application/json");
+    res.set_content(body.dump(), "application/json");
+    res.status = httplib::StatusCode::OK_200;
 }
