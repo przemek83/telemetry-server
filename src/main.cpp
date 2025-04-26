@@ -10,7 +10,7 @@
 #include "GetHandler.h"
 #include "PostHandler.h"
 #include "Telemetry.h"
-#include "Tests.h"
+// #include "Tests.h"
 
 namespace
 {
@@ -123,10 +123,11 @@ int main()
     // auto server{std::async([&svr, address]() { svr.listen(address, port);
     // })};
 
-    tests::runTelemetryTests();
+    // tests::runTelemetryTests();
+    // tests::runPostingTests();
 
-    auto testClient{
-        std::async(std::launch::async, getTestingClient(address, port))};
+    // auto testClient{
+    //     std::async(std::launch::async, getTestingClient(address, port))};
 
     svr.listen(address, port);
 

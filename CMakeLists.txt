@@ -25,6 +25,8 @@ FetchContent_Declare(
     GIT_TAG v0.20.0
 )
 
+include_directories(${httplib_SOURCE_DIR})
+
 FetchContent_Declare(
     json
     GIT_REPOSITORY https://github.com/nlohmann/json.git
@@ -55,25 +57,25 @@ FetchContent_MakeAvailable(json)
 # file(COPY <TODO: dir> DESTINATION ${CMAKE_BINARY_DIR})
 
 set(${PROJECT_NAME}_SOURCES
-    main.cpp
-    PostHandler.h
-    PostHandler.cpp
-    GetHandler.h
-    GetHandler.cpp
-    Telemetry.h
-    Telemetry.cpp
-    Tests.h
-    Tests.cpp
+    src/PostHandler.h
+    src/PostHandler.cpp
+    src/GetHandler.h
+    src/GetHandler.cpp
+    src/Telemetry.h
+    src/Telemetry.cpp
+    # Tests.h
+    # Tests.cpp
 )
 
 # Create default binaries.
-# add_library (${PROJECT_NAME}-lib STATIC ${${PROJECT_NAME}_SOURCES})
-# target_link_libraries(${PROJECT_NAME}-lib <TODO: external libs>)
+add_library (${PROJECT_NAME}-lib STATIC ${${PROJECT_NAME}_SOURCES})
+# target_include_directories(${PROJECT_NAME}-lib PRIVATE ${httplib_SOURCE_DIR})
+target_link_libraries(${PROJECT_NAME}-lib nlohmann_json::nlohmann_json)
 
-add_executable(${PROJECT_NAME} ${${PROJECT_NAME}_SOURCES})
-target_include_directories(${PROJECT_NAME} PRIVATE ${httplib_SOURCE_DIR})
-target_link_libraries(${PROJECT_NAME} nlohmann_json::nlohmann_json)
+add_executable(${PROJECT_NAME} src/main.cpp)
+# target_include_directories(${PROJECT_NAME} PRIVATE ${httplib_SOURCE_DIR})
+target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}-lib nlohmann_json::nlohmann_json)
 
-# enable_testing()
-# include(Tests.cmake)
-# add_subdirectory(tests)
+enable_testing()
+include(Tests.cmake)
+add_subdirectory(tests)
