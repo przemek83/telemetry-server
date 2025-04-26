@@ -120,15 +120,6 @@ int main()
              [&handler = postHandler](const Request& req, Response& res)
              { handler.processEvent(req, res); });
 
-    // auto server{std::async([&svr, address]() { svr.listen(address, port);
-    // })};
-
-    // tests::runTelemetryTests();
-    // tests::runPostingTests();
-
-    // auto testClient{
-    //     std::async(std::launch::async, getTestingClient(address, port))};
-
     svr.listen(address, port);
 
     return EXIT_SUCCESS;
@@ -137,6 +128,4 @@ int main()
     // curl -X GET --json ''  "localhost:8080/paths/start/mean?resultUnit=seconds&startTimestamp=11&endTimestamp=13"
     // curl -X POST --json '{"date":1713897600,"values":[1,2,3,4]}' localhost:8080/paths/start
     // clang-format on
-
-    return 0;
 }

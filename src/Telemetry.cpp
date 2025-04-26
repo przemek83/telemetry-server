@@ -32,6 +32,7 @@ int Telemetry::computeMean(const std::string& name, int fromDate, int toDate)
 
     std::lock_guard lock(mutex_);
     const std::map<int, std::vector<int>>& category{entries_[name]};
+
     return compute(category, dateFilter);
 }
 
@@ -47,14 +48,12 @@ int Telemetry::compute(const std::map<int, std::vector<int>>& entries,
 
         for (const auto& value : values)
         {
-            // std::cout << "Adding value: " << value << " for date: " << date
-            //           << std::endl;
             sum += value;
             ++count;
         }
     }
 
-    std::cout << "Sum: " << sum << " Count: " << count << std::endl;
+    // std::cout << "Sum: " << sum << " Count: " << count << std::endl;
 
     return count == 0 ? 0 : sum / count;
 }
