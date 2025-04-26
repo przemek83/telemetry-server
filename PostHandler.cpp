@@ -2,6 +2,10 @@
 
 #include <nlohmann/json.hpp>
 
+#include "Telemetry.h"
+
+PostHandler::PostHandler(Telemetry& telemetry) : telemetry_(telemetry) {}
+
 void PostHandler::processEvent(const httplib::Request& req,
                                httplib::Response& res)
 {
@@ -10,12 +14,18 @@ void PostHandler::processEvent(const httplib::Request& req,
               << std::endl;
 
     nlohmann::json parsedData = nlohmann::json::parse(req.body);
+
+    std::vector<int> values = parsedData["values"].get<std::vector<int>>();
+
     std::cout << "Values: ";
-    for (int num : parsedData["values"])
-    {
+    for (int num : values)
         std::cout << num << " ";
-    }
-    std::cout << "\nDate: " << parsedData["date"] << std::endl;
+
+    std::cout << "\n";
+    int date = parsedData["date"];
+    std::cout << "Date: " << date << std::endl;
+
+    telemetry_.addEntry(event, date, values);
 
     res.status = httplib::StatusCode::OK_200;
     res.set_content("{}", "application/json");

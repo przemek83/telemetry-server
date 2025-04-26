@@ -60,6 +60,10 @@ set(${PROJECT_NAME}_SOURCES
     PostHandler.cpp
     GetHandler.h
     GetHandler.cpp
+    Telemetry.h
+    Telemetry.cpp
+    Tests.h
+    Tests.cpp
 )
 
 # Create default binaries.
