@@ -5,6 +5,7 @@ include_directories(${CMAKE_SOURCE_DIR})
 set(${PROJECT_TEST}_SOURCES
     TelemetryTest.cpp
     PostHandlerTest.cpp
+    GetHandlerTest.cpp
 )
 
 add_executable(${PROJECT_TEST} ${${PROJECT_TEST}_SOURCES})
