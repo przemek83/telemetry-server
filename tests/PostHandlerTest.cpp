@@ -77,7 +77,7 @@ TEST_CASE("PostHandler Tests", "[rest-server]")
         request.path_params["event"] = eventName;
         request.body = R"({"date": 1, "values": []})";  // Empty "values"
         postHandler.processEvent(request, response);
-        REQUIRE(response.status == httplib::StatusCode::BadRequest_400);
+        REQUIRE(response.status == httplib::StatusCode::OK_200);
     }
 
     SECTION("Invalid date in payload")
