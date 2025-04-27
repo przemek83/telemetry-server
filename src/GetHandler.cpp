@@ -22,31 +22,39 @@ void GetHandler::processEvent(const httplib::Request& req,
         return;
     }
 
-    const auto [success, resultUnit]{getResultUnit(req, res)};
+    const auto [success, params]{parseRequest(req, res)};
     if (!success)
         return;
+
+    const auto& [resultUnit, startDate, endDate]{params};
+
+    int mean{telemetry_.computeMean(event, startDate, endDate)};
+    if (resultUnit == validTimeUnitNames_[MILISECONDS_INDEX])
+        mean *= 1000;
+
+    fillResponse(res, mean);
+
+    logger_.info("end GET " + req.path +
+                 ": computed mean = " + std::to_string(mean));
+}
+
+std::pair<bool, GetHandler::RequestParams> GetHandler::parseRequest(
+    const httplib::Request& req, httplib::Response& res)
+{
+    const auto [success, resultUnit]{getResultUnit(req, res)};
+    if (!success)
+        return {false, {}};
 
     const auto [successStartDate,
                 startDate]{getDate(req, "startTimestamp", res)};
     if (!successStartDate)
-        return;
+        return {false, {}};
 
     const auto [successEndDate, endDate]{getDate(req, "endTimestamp", res)};
     if (!successEndDate)
-        return;
+        return {false, {}};
 
-    int value{telemetry_.computeMean(event, startDate, endDate)};
-    if (resultUnit == validTimeUnitNames_[MILISECONDS_INDEX])
-        value *= 1000;
-
-    nlohmann::json body;
-    body["mean"] = value;
-
-    res.set_content(body.dump(), "application/json");
-    res.status = httplib::StatusCode::OK_200;
-
-    logger_.info("end GET " + req.path +
-                 ": computed mean = " + std::to_string(value));
+    return {true, {resultUnit, startDate, endDate}};
 }
 
 std::pair<bool, std::string> GetHandler::getResultUnit(
@@ -101,4 +109,13 @@ std::pair<bool, int> GetHandler::getDate(const httplib::Request& req,
     }
 
     return {true, date};
+}
+
+void GetHandler::fillResponse(httplib::Response& res, int mean)
+{
+    nlohmann::json body;
+    body["mean"] = mean;
+
+    res.set_content(body.dump(), "application/json");
+    res.status = httplib::StatusCode::OK_200;
 }
