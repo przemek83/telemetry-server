@@ -7,10 +7,11 @@
 
 namespace
 {
-httplib::Params createParams(int start, int end)
+httplib::Params createParams(int start, int end,
+                             std::string resultUnit = "milliseconds")
 {
     httplib::Params params;
-    params.emplace("resultUnit", "seconds");  // miliseconds
+    params.emplace("resultUnit", resultUnit);
     if (start != Telemetry::DATE_NOT_SET)
         params.emplace("startTimestamp", std::to_string(start));
 
@@ -122,5 +123,21 @@ TEST_CASE("GetHandler Tests", "[rest-server]")
         request.path_params["invalid"] = "invalid";
         getHandler.processEvent(request, response);
         validateMean(response, 5);
+    }
+
+    SECTION("Get data with invalid result unit")
+    {
+        request.params = createParams(1, 3, "invalidTimeUnit");
+        request.path_params["event"] = eventName;
+        getHandler.processEvent(request, response);
+        REQUIRE(response.status == httplib::StatusCode::BadRequest_400);
+    }
+
+    SECTION("Get data with empty result unit")
+    {
+        request.params = createParams(1, 3, "");
+        request.path_params["event"] = eventName;
+        getHandler.processEvent(request, response);
+        REQUIRE(response.status == httplib::StatusCode::BadRequest_400);
     }
 }
