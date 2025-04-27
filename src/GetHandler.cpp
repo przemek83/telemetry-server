@@ -96,11 +96,12 @@ std::pair<bool, int> GetHandler::getDate(const httplib::Request& req,
         return {true, date};
 
     const std::string value{req.get_param_value(paramName)};
-    const std::string_view view{value};
     const auto [mismatch,
-                errorCode]{std::from_chars(view.begin(), view.end(), date)};
+                errorCode]{std::from_chars(value.data(), 
+                value.data() + value.size(), 
+                date)};
 
-    if (errorCode != std::errc() || mismatch != view.end())
+    if (errorCode != std::errc() || mismatch != (value.data() + value.size()))
     {
         std::string errorMessage{"Invalid value for '" + paramName +
                                  "': " + value + ". Expected an integer."};
