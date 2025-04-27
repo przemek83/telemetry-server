@@ -6,16 +6,15 @@
 #include <nlohmann/json.hpp>
 #include <string>
 
+#include "Logger.h"
 #include "Telemetry.h"
-
-GetHandler::GetHandler(Telemetry& telemetry) : EventHandler(telemetry) {}
 
 void GetHandler::processEvent(const httplib::Request& req,
                               httplib::Response& res)
 {
+    logger_.info("start GET " + req.path);
+
     std::string event{req.path_params.at("event")};
-    std::cout << "SERVER: " << req.path << " " << event << " " << req.body
-              << std::endl;
 
     if (!isValidEventName(event))
     {
@@ -27,50 +26,29 @@ void GetHandler::processEvent(const httplib::Request& req,
     if (!success)
         return;
 
-    int startDate{Telemetry::DATE_NOT_SET};
-    int endDate{Telemetry::DATE_NOT_SET};
+    const auto [successStartDate,
+                startDate]{getDate(req, "startTimestamp", res)};
+    if (!successStartDate)
+        return;
 
-    if (req.has_param("startTimestamp"))
-    {
-        std::string value{req.get_param_value("startTimestamp")};
-        std::string_view valueView{value};
-        auto [_, errorCode]{
-            std::from_chars(valueView.begin(), valueView.end(), startDate)};
-        if (errorCode == std::errc())
-            std::cout << "SERVER: startDate: " << startDate << std::endl;
-        else
-            std::cout << "SERVER: startDate: " << value << " conversion error: "
-                      << std::make_error_code(errorCode).message() << std::endl;
-        // std::cout << "SERVER: startTimestamp: "
-        //           << req.get_param_value("startTimestamp") << std::endl;
-    }
-    if (req.has_param("endTimestamp"))
-    {
-        std::string value{req.get_param_value("endTimestamp")};
-        std::string_view valueView{value};
-        auto [_, errorCode]{
-            std::from_chars(valueView.begin(), valueView.end(), endDate)};
-        if (errorCode == std::errc())
-            std::cout << "SERVER: endDate: " << endDate << std::endl;
-        else
-            std::cout << "SERVER: endDate: " << value << " conversion error: "
-                      << std::make_error_code(errorCode).message() << std::endl;
-    }
-    // std::string key = req.get_param_value("key");
-    // std::string count = req.get_param_value("count");
-    // std::cout << "SERVER: Key: " << key << " Count: " << count
-    //           << std::endl;
+    const auto [successEndDate, endDate]{getDate(req, "endTimestamp", res)};
+    if (!successEndDate)
+        return;
 
     nlohmann::json body;
     int value{telemetry_.computeMean(event, startDate, endDate)};
+
     body["mean"] = value;
-    // std::cout << "SERVER: value: " << value << std::endl;
+
     res.set_content(body.dump(), "application/json");
     res.status = httplib::StatusCode::OK_200;
+
+    logger_.info("end GET " + req.path +
+                 ": computed mean = " + std::to_string(value));
 }
 
 std::pair<bool, std::string> GetHandler::getResultUnit(
-    const httplib::Request& req, httplib::Response& res) const
+    const httplib::Request& req, httplib::Response& res)
 {
     if (!req.has_param("resultUnit"))
     {
@@ -96,4 +74,29 @@ std::pair<bool, std::string> GetHandler::getResultUnit(
     }
 
     return {true, resultUnit};
+}
+
+std::pair<bool, int> GetHandler::getDate(const httplib::Request& req,
+                                         const std::string& paramName,
+                                         httplib::Response& res)
+{
+    int date{Telemetry::DATE_NOT_SET};
+
+    if (!req.has_param(paramName))
+        return {true, date};
+
+    const std::string value{req.get_param_value(paramName)};
+    const std::string_view view{value};
+    const auto [mismatch,
+                errorCode]{std::from_chars(view.begin(), view.end(), date)};
+
+    if (errorCode != std::errc() || mismatch != view.end())
+    {
+        std::string errorMessage{"Invalid value for '" + paramName +
+                                 "': " + value + ". Expected an integer."};
+        raiseError(res, errorMessage);
+        return {false, date};
+    }
+
+    return {true, date};
 }

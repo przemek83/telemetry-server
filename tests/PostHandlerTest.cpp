@@ -1,6 +1,7 @@
 #include <httplib.h>
 #include <catch2/catch_test_macros.hpp>
 #include <nlohmann/json.hpp>
+#include "tests/FakeLogger.h"
 
 #include <src/PostHandler.h>
 #include <src/Telemetry.h>
@@ -22,8 +23,9 @@ TEST_CASE("PostHandler Tests", "[rest-server]")
     httplib::Response response;
 
     Telemetry telemetry;
+    FakeLogger logger;
     const std::string eventName{"TestEvent"};
-    PostHandler postHandler(telemetry);
+    PostHandler postHandler(telemetry, logger);
 
     SECTION("Posting data and verifying mean")
     {
@@ -59,7 +61,7 @@ TEST_CASE("PostHandler Tests", "[rest-server]")
     SECTION("Missing values in payload")
     {
         request.path_params["event"] = eventName;
-        request.body = R"({"date": 1})";  // Missing "values"
+        request.body = R"({"date": 1})";
         postHandler.processEvent(request, response);
         REQUIRE(response.status == httplib::StatusCode::BadRequest_400);
     }
@@ -67,7 +69,7 @@ TEST_CASE("PostHandler Tests", "[rest-server]")
     SECTION("Missing date in payload")
     {
         request.path_params["event"] = eventName;
-        request.body = R"({"values": [1, 2, 3]})";  // Missing "date"
+        request.body = R"({"values": [1, 2, 3]})";
         postHandler.processEvent(request, response);
         REQUIRE(response.status == httplib::StatusCode::BadRequest_400);
     }
@@ -75,7 +77,7 @@ TEST_CASE("PostHandler Tests", "[rest-server]")
     SECTION("Empty values in payload")
     {
         request.path_params["event"] = eventName;
-        request.body = R"({"date": 1, "values": []})";  // Empty "values"
+        request.body = R"({"date": 1, "values": []})";
         postHandler.processEvent(request, response);
         REQUIRE(response.status == httplib::StatusCode::OK_200);
     }
@@ -83,8 +85,7 @@ TEST_CASE("PostHandler Tests", "[rest-server]")
     SECTION("Invalid date in payload")
     {
         request.path_params["event"] = eventName;
-        request.body =
-            R"({"date": "invalid_date", "values": [1, 2, 3]})";  // Invalid date
+        request.body = R"({"date": "invalid_date", "values": [1, 2, 3]})";
         postHandler.processEvent(request, response);
         REQUIRE(response.status == httplib::StatusCode::BadRequest_400);
     }
@@ -92,15 +93,14 @@ TEST_CASE("PostHandler Tests", "[rest-server]")
     SECTION("Invalid values in payload")
     {
         request.path_params["event"] = eventName;
-        request.body =
-            R"({"date": 1, "values": "invalid_values"})";  // Invalid values
+        request.body = R"({"date": 1, "values": "invalid_values"})";
         postHandler.processEvent(request, response);
         REQUIRE(response.status == httplib::StatusCode::BadRequest_400);
     }
 
     SECTION("Invalid event name")
     {
-        request.path_params["event"] = "";  // Invalid event name
+        request.path_params["event"] = "";
         request.body = createPayload(1, {1, 2, 3});
         postHandler.processEvent(request, response);
         REQUIRE(response.status == httplib::StatusCode::BadRequest_400);
@@ -108,7 +108,7 @@ TEST_CASE("PostHandler Tests", "[rest-server]")
 
     SECTION("Invalid event name with special characters")
     {
-        request.path_params["event"] = "Test@Event";  // Invalid event name
+        request.path_params["event"] = "Test@Event";
         request.body = createPayload(1, {1, 2, 3});
         postHandler.processEvent(request, response);
         REQUIRE(response.status == httplib::StatusCode::BadRequest_400);
@@ -116,7 +116,7 @@ TEST_CASE("PostHandler Tests", "[rest-server]")
 
     SECTION("Invalid event name with spaces")
     {
-        request.path_params["event"] = "Test Event";  // Invalid event name
+        request.path_params["event"] = "Test Event";
         request.body = createPayload(1, {1, 2, 3});
         postHandler.processEvent(request, response);
         REQUIRE(response.status == httplib::StatusCode::BadRequest_400);

@@ -65,6 +65,9 @@ set(${PROJECT_NAME}_SOURCES
     src/Telemetry.cpp
     src/EventHandler.h
     src/EventHandler.cpp
+    src/Logger.h
+    src/SimpleLogger.h
+    src/SimpleLogger.cpp
 )
 
 # Create default binaries.

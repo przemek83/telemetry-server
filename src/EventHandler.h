@@ -3,6 +3,7 @@
 #include <string>
 
 class Telemetry;
+class Logger;
 namespace httplib
 {
 struct Request;
@@ -12,7 +13,8 @@ struct Response;
 class EventHandler
 {
 public:
-    explicit EventHandler(Telemetry& telemetry);
+    EventHandler(Telemetry& telemetry, Logger& logger);
+
     virtual ~EventHandler() = default;
 
     virtual void processEvent(const httplib::Request& req,
@@ -21,8 +23,8 @@ public:
 protected:
     static bool isValidEventName(const std::string& event);
 
-    static void raiseError(httplib::Response& res,
-                           const std::string& errorMessage);
+    void raiseError(httplib::Response& res, const std::string& errorMessage);
 
     Telemetry& telemetry_;
+    Logger& logger_;
 };

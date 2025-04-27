@@ -3,16 +3,15 @@
 #include <httplib.h>
 #include <nlohmann/json.hpp>
 
+#include "Logger.h"
 #include "Telemetry.h"
-
-PostHandler::PostHandler(Telemetry& telemetry) : EventHandler(telemetry) {}
 
 void PostHandler::processEvent(const httplib::Request& req,
                                httplib::Response& res)
 {
+    logger_.info("start POST " + req.path + ", body=" + req.body);
+
     std::string event{req.path_params.at("event")};
-    std::cout << "SERVER: " << req.path << " " << event << " " << req.body
-              << std::endl;
 
     res.set_content(nlohmann::json::object().dump(), "application/json");
 
@@ -26,10 +25,10 @@ void PostHandler::processEvent(const httplib::Request& req,
     if (!success)
         return;
 
-    std::cout << "Date: " << date << std::endl;
-
     telemetry_.addEntry(event, date, values);
     res.status = httplib::StatusCode::OK_200;
+
+    logger_.info("end POST " + req.path);
 }
 
 std::tuple<bool, int, std::vector<int>> PostHandler::parsePayload(
@@ -62,7 +61,7 @@ std::pair<bool, std::vector<int>> PostHandler::parseValues(
 {
     if (!parsedData.contains("values"))
     {
-        raiseError(res, "Missing required values fields in JSON payload.");
+        raiseError(res, "Missing required values field in JSON payload.");
         return {false, {}};
     }
 
@@ -82,7 +81,7 @@ std::pair<bool, int> PostHandler::parseDate(const nlohmann::json& parsedData,
 {
     if (!parsedData.contains("date"))
     {
-        raiseError(res, "Missing required date fields in JSON payload.");
+        raiseError(res, "Missing required date field in JSON payload.");
         return {false, 0};
     }
 

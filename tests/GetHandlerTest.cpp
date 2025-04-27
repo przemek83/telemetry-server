@@ -5,6 +5,8 @@
 #include <src/GetHandler.h>
 #include <src/Telemetry.h>
 
+#include "FakeLogger.h"
+
 namespace
 {
 httplib::Params createParams(int start, int end,
@@ -41,7 +43,8 @@ TEST_CASE("GetHandler Tests", "[rest-server]")
     telemetry.addEntry(eventName, 1, {1, 2, 3});
     telemetry.addEntry(eventName, 2, {4, 5, 6});
     telemetry.addEntry(eventName, 3, {7, 8, 9});
-    GetHandler getHandler(telemetry);
+    FakeLogger logger;
+    GetHandler getHandler(telemetry, logger);
 
     SECTION("Get data and verifying mean")
     {
@@ -136,6 +139,46 @@ TEST_CASE("GetHandler Tests", "[rest-server]")
     SECTION("Get data with empty result unit")
     {
         request.params = createParams(1, 3, "");
+        request.path_params["event"] = eventName;
+        getHandler.processEvent(request, response);
+        REQUIRE(response.status == httplib::StatusCode::BadRequest_400);
+    }
+
+    SECTION("Get data with incorect start date")
+    {
+        request.params =
+            createParams(Telemetry::DATE_NOT_SET, Telemetry::DATE_NOT_SET);
+        request.params.emplace("startTimestamp", "1a");
+        request.path_params["event"] = eventName;
+        getHandler.processEvent(request, response);
+        REQUIRE(response.status == httplib::StatusCode::BadRequest_400);
+    }
+
+    SECTION("Get data with incorect end date")
+    {
+        request.params =
+            createParams(Telemetry::DATE_NOT_SET, Telemetry::DATE_NOT_SET);
+        request.params.emplace("endTimestamp", "1a");
+        request.path_params["event"] = eventName;
+        getHandler.processEvent(request, response);
+        REQUIRE(response.status == httplib::StatusCode::BadRequest_400);
+    }
+
+    SECTION("Get data with empty start date")
+    {
+        request.params =
+            createParams(Telemetry::DATE_NOT_SET, Telemetry::DATE_NOT_SET);
+        request.params.emplace("startTimestamp", "");
+        request.path_params["event"] = eventName;
+        getHandler.processEvent(request, response);
+        REQUIRE(response.status == httplib::StatusCode::BadRequest_400);
+    }
+
+    SECTION("Get data with empty end date")
+    {
+        request.params =
+            createParams(Telemetry::DATE_NOT_SET, Telemetry::DATE_NOT_SET);
+        request.params.emplace("endTimestamp", "");
         request.path_params["event"] = eventName;
         getHandler.processEvent(request, response);
         REQUIRE(response.status == httplib::StatusCode::BadRequest_400);

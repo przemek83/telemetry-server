@@ -7,10 +7,11 @@
 #include <nlohmann/json.hpp>
 #include <thread>
 
+#include "EventHandler.h"
 #include "GetHandler.h"
 #include "PostHandler.h"
+#include "SimpleLogger.h"
 #include "Telemetry.h"
-// #include "Tests.h"
 
 namespace
 {
@@ -18,8 +19,8 @@ httplib::Params createParams()
 {
     httplib::Params params;
     params.emplace("resultUnit", "seconds");  // miliseconds
-    params.emplace("startTimestamp", "10");
-    params.emplace("endTimestamp", "20");
+    params.emplace("startTimestamp", "1");
+    params.emplace("endTimestamp", "3");
     return params;
 }
 
@@ -95,7 +96,22 @@ auto getTestingClient(const std::string& address, int port)
         // testGetting(client);
     };
 }
+
+using httplib::Request;
+using httplib::Response;
+
+std::function<void(const Request& req, Response& res)> wrapHandler(
+    EventHandler& handler)
+{
+    return [&handler](const Request& req, Response& res)
+    { handler.processEvent(req, res); };
+}
 }  // namespace
+
+// clang-format off
+// curl -X GET --json ''  "localhost:8080/paths/start/mean?resultUnit=seconds&startTimestamp=11&endTimestamp=13"
+// curl -X POST --json '{"date":1713897600,"values":[1,2,3,4]}' localhost:8080/paths/start
+// clang-format on
 
 int main()
 {
@@ -104,28 +120,20 @@ int main()
     std::string address("0.0.0.0");
     const int port{8080};
 
-    using httplib::Request;
-    using httplib::Response;
-
     httplib::Server svr;
     Telemetry telemetry;
+    SimpleLogger logger;
 
-    GetHandler getHandler(telemetry);
-    svr.Get("/paths/:event/mean",
-            [&handler = getHandler](const Request& req, Response& res)
-            { handler.processEvent(req, res); });
+    GetHandler getHandler(telemetry, logger);
+    svr.Get("/paths/:event/mean", wrapHandler(getHandler));
 
-    PostHandler postHandler(telemetry);
-    svr.Post("/paths/:event",
-             [&handler = postHandler](const Request& req, Response& res)
-             { handler.processEvent(req, res); });
+    PostHandler postHandler(telemetry, logger);
+    svr.Post("/paths/:event", wrapHandler(postHandler));
 
-    svr.listen(address, port);
+    auto server =
+        std::async([&svr, address, port]() { svr.listen(address, port); });
+
+    getTestingClient(address, port)();
 
     return EXIT_SUCCESS;
-
-    // clang-format off
-    // curl -X GET --json ''  "localhost:8080/paths/start/mean?resultUnit=seconds&startTimestamp=11&endTimestamp=13"
-    // curl -X POST --json '{"date":1713897600,"values":[1,2,3,4]}' localhost:8080/paths/start
-    // clang-format on
 }

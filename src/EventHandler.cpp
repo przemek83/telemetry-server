@@ -2,7 +2,10 @@
 
 #include <httplib.h>
 
-EventHandler::EventHandler(Telemetry& telemetry) : telemetry_(telemetry) {}
+#include "Logger.h"
+
+EventHandler::EventHandler(Telemetry& telemetry, Logger& logger)
+    : telemetry_(telemetry), logger_(logger){};
 
 bool EventHandler::isValidEventName(const std::string& event)
 {
@@ -13,6 +16,6 @@ bool EventHandler::isValidEventName(const std::string& event)
 void EventHandler::raiseError(httplib::Response& res,
                               const std::string& errorMessage)
 {
-    std::cerr << errorMessage << std::endl;
+    logger_.error(errorMessage);
     res.status = httplib::StatusCode::BadRequest_400;
 }
