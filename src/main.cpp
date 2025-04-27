@@ -20,9 +20,11 @@ std::function<void(const Request& req, Response& res)> wrapHandler(
 }  // namespace
 
 // clang-format off
+// Tested on Linux using GCC 13.2 and Windows using MSVC 19.2x
+
 // Example curl commands:
 // curl -X GET --json ''  "localhost:8080/paths/start/meanLength?resultUnit=seconds&startTimestamp=1&endTimestamp=3"
-// curl -X POST --json '{"date":1713897600,"values":[1,2,3,4]}' localhost:8080/paths/start
+// curl -X POST --json '{"date":1,"values":[1,2,3,4]}' localhost:8080/paths/start
 // clang-format on
 
 int main()
