@@ -32,8 +32,9 @@ private:
                                  const std::string& paramName,
                                  httplib::Response& res);
 
-    void fillResponse(httplib::Response& res, int mean);
+    static void fillResponse(httplib::Response& res, int mean);
 
+    static constexpr int MILLISECONDS_IN_SECOND{1000};
     static constexpr int SECONDS_INDEX{0};
     static constexpr int MILISECONDS_INDEX{SECONDS_INDEX + 1};
 

@@ -30,7 +30,7 @@ void GetHandler::processEvent(const httplib::Request& req,
 
     int mean{telemetry_.computeMean(event, startDate, endDate)};
     if (resultUnit == validTimeUnitNames_[MILISECONDS_INDEX])
-        mean *= 1000;
+        mean *= MILLISECONDS_IN_SECOND;
 
     fillResponse(res, mean);
 
