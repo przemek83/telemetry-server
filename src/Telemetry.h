@@ -2,9 +2,8 @@
 
 #include <functional>
 #include <map>
-#include <mutex>
+#include <shared_mutex>
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 class Telemetry
@@ -24,7 +23,8 @@ private:
 
     static std::function<bool(int)> createFilter(int fromDate, int toDate);
 
-    std::mutex mutex_;
+    std::shared_mutex mutex_;
 
-    std::unordered_map<std::string, std::map<int, std::vector<int>>> entries_;
+    std::map<std::string, std::map<int, std::vector<int>>, std::less<>>
+        entries_;
 };

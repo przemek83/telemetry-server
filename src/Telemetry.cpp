@@ -1,13 +1,11 @@
 #include "Telemetry.h"
 
-#include <functional>
-#include <iostream>
 #include <mutex>
 
 void Telemetry::addEntry(const std::string& name, int date,
                          const std::vector<int>& values)
 {
-    std::lock_guard lock(mutex_);
+    std::unique_lock lock(mutex_);
     std::map<int, std::vector<int>>& category{entries_[name]};
     std::vector<int>& entries{category[date]};
     entries.insert(entries.end(), values.begin(), values.end());
@@ -15,11 +13,10 @@ void Telemetry::addEntry(const std::string& name, int date,
 
 int Telemetry::computeMean(const std::string& name, int fromDate, int toDate)
 {
-    auto filter{createFilter(fromDate, toDate)};
+    const auto filter{createFilter(fromDate, toDate)};
 
-    std::lock_guard lock(mutex_);
+    std::shared_lock lock(mutex_);
     const std::map<int, std::vector<int>>& category{entries_[name]};
-
     return compute(category, filter);
 }
 
