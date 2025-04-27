@@ -1,11 +1,12 @@
 #include "GetHandler.h"
 
+#include <httplib.h>
 #include <charconv>
 #include <nlohmann/json.hpp>
 
 #include "Telemetry.h"
 
-GetHandler::GetHandler(Telemetry& telemetry) : telemetry_(telemetry) {}
+GetHandler::GetHandler(Telemetry& telemetry) : EventHandler(telemetry) {}
 
 void GetHandler::processEvent(const httplib::Request& req,
                               httplib::Response& res)

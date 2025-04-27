@@ -1,3 +1,5 @@
+#pragma once
+
 #include <functional>
 #include <map>
 #include <mutex>
@@ -8,14 +10,6 @@
 class Telemetry
 {
 public:
-    // Telemetry() = default;
-    // ~Telemetry() = default;
-
-    // Telemetry(const Telemetry&) = delete;
-    // Telemetry(Telemetry&&) = delete;
-    // Telemetry& operator=(const Telemetry&) = delete;
-    // Telemetry& operator=(Telemetry&&) = delete;
-
     void addEntry(const std::string& name, int date,
                   const std::vector<int>& values);
 

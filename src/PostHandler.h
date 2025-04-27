@@ -1,14 +1,18 @@
-#include <httplib.h>
+#pragma once
+
 #include "nlohmann/json_fwd.hpp"
+
+#include "EventHandler.h"
 
 class Telemetry;
 
-class PostHandler
+class PostHandler : public EventHandler
 {
 public:
     explicit PostHandler(Telemetry& telemetry);
 
-    void processEvent(const httplib::Request& req, httplib::Response& res);
+    void processEvent(const httplib::Request& req,
+                      httplib::Response& res) override;
 
 private:
     static std::tuple<bool, int, std::vector<int>> parsePayload(
@@ -19,11 +23,4 @@ private:
 
     static std::pair<bool, int> parseDate(const nlohmann::json& parsedData,
                                           httplib::Response& res);
-
-    static bool isValidEventName(const std::string& event);
-
-    static void raiseError(httplib::Response& res,
-                           const std::string& errorMessage);
-
-    Telemetry& telemetry_;
 };

@@ -63,8 +63,8 @@ set(${PROJECT_NAME}_SOURCES
     src/GetHandler.cpp
     src/Telemetry.h
     src/Telemetry.cpp
-    # Tests.h
-    # Tests.cpp
+    src/EventHandler.h
+    src/EventHandler.cpp
 )
 
 # Create default binaries.

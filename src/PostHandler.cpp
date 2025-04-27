@@ -1,11 +1,11 @@
 #include "PostHandler.h"
 
-#include <algorithm>
+#include <httplib.h>
 #include <nlohmann/json.hpp>
 
 #include "Telemetry.h"
 
-PostHandler::PostHandler(Telemetry& telemetry) : telemetry_(telemetry) {}
+PostHandler::PostHandler(Telemetry& telemetry) : EventHandler(telemetry) {}
 
 void PostHandler::processEvent(const httplib::Request& req,
                                httplib::Response& res)
@@ -93,17 +93,4 @@ std::pair<bool, int> PostHandler::parseDate(const nlohmann::json& parsedData,
     }
 
     return {true, parsedData["date"]};
-}
-
-bool PostHandler::isValidEventName(const std::string& event)
-{
-    return !event.empty() &&
-           std::all_of(event.cbegin(), event.cend(),
-                       [](unsigned char c) { return std::isalnum(c); });
-}
-void PostHandler::raiseError(httplib::Response& res,
-                             const std::string& errorMessage)
-{
-    std::cerr << errorMessage << std::endl;
-    res.status = httplib::StatusCode::BadRequest_400;
 }
