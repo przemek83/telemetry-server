@@ -22,6 +22,8 @@ private:
     static int compute(const std::map<int, std::vector<int>>& entries,
                        const std::function<bool(int)>& shouldIncludeDate);
 
+    static std::function<bool(int)> createFilter(int fromDate, int toDate);
+
     std::mutex mutex_;
 
     std::unordered_map<std::string, std::map<int, std::vector<int>>> entries_;

@@ -10,7 +10,7 @@
 namespace
 {
 httplib::Params createParams(int start, int end,
-                             std::string resultUnit = "milliseconds")
+                             std::string resultUnit = "seconds")
 {
     httplib::Params params;
     params.emplace("resultUnit", resultUnit);
@@ -53,6 +53,15 @@ TEST_CASE("GetHandler Tests", "[rest-server]")
         request.path_params["event"] = eventName;
         getHandler.processEvent(request, response);
         validateMean(response, 5);
+    }
+
+    SECTION("Get data and verifying mean in milliseconds")
+    {
+        request.params = createParams(Telemetry::DATE_NOT_SET,
+                                      Telemetry::DATE_NOT_SET, "milliseconds");
+        request.path_params["event"] = eventName;
+        getHandler.processEvent(request, response);
+        validateMean(response, 5000);
     }
 
     SECTION("Get data with start and end date")

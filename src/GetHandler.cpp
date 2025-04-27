@@ -35,9 +35,11 @@ void GetHandler::processEvent(const httplib::Request& req,
     if (!successEndDate)
         return;
 
-    nlohmann::json body;
     int value{telemetry_.computeMean(event, startDate, endDate)};
+    if (resultUnit == validTimeUnitNames_[MILISECONDS_INDEX])
+        value *= 1000;
 
+    nlohmann::json body;
     body["mean"] = value;
 
     res.set_content(body.dump(), "application/json");

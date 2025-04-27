@@ -37,7 +37,7 @@ void testGetting(httplib::Client& client, const std::string& event,
 {
     std::cout << "Client: GET sending" << std::endl;
     httplib::Params params{createParams()};
-    auto res = client.Get("/paths/" + event + "/mean", params, {});
+    auto res = client.Get("/paths/" + event + "/meanLength", params, {});
     std::cout << "Client: GET reply code=" << res->status
               << " body: " << res->body << std::endl;
     assert(res->status == httplib::StatusCode::OK_200);
@@ -109,7 +109,8 @@ std::function<void(const Request& req, Response& res)> wrapHandler(
 }  // namespace
 
 // clang-format off
-// curl -X GET --json ''  "localhost:8080/paths/start/mean?resultUnit=seconds&startTimestamp=11&endTimestamp=13"
+// Example curl commands:
+// curl -X GET --json ''  "localhost:8080/paths/start/meanLength?resultUnit=seconds&startTimestamp=1&endTimestamp=3"
 // curl -X POST --json '{"date":1713897600,"values":[1,2,3,4]}' localhost:8080/paths/start
 // clang-format on
 
@@ -125,7 +126,7 @@ int main()
     SimpleLogger logger;
 
     GetHandler getHandler(telemetry, logger);
-    svr.Get("/paths/:event/mean", wrapHandler(getHandler));
+    svr.Get("/paths/:event/meanLength", wrapHandler(getHandler));
 
     PostHandler postHandler(telemetry, logger);
     svr.Post("/paths/:event", wrapHandler(postHandler));
