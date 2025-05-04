@@ -11,7 +11,7 @@ void PostHandler::processEvent(const httplib::Request& req,
 {
     logger_.info("start POST " + req.path + ", body=" + req.body);
 
-    std::string event{req.path_params.at("event")};
+    const std::string event{req.path_params.at("event")};
 
     res.set_content(nlohmann::json::object().dump(), "application/json");
 
