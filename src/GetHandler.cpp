@@ -29,7 +29,7 @@ void GetHandler::processEvent(const httplib::Request& req,
     const auto& [resultUnit, startDate, endDate]{params};
 
     int mean{telemetry_.computeMean(event, startDate, endDate)};
-    if (resultUnit == validTimeUnitNames_[MILISECONDS_INDEX])
+    if (resultUnit == timeUnitNames_[MILISECONDS_INDEX])
         mean *= MILLISECONDS_IN_SECOND;
 
     fillResponse(res, mean);
@@ -67,11 +67,11 @@ std::pair<bool, std::string> GetHandler::getResultUnit(
     }
 
     std::string resultUnit{req.get_param_value("resultUnit")};
-    if (std::find(validTimeUnitNames_.cbegin(), validTimeUnitNames_.cend(),
-                  resultUnit) == validTimeUnitNames_.cend())
+    if (std::find(timeUnitNames_.cbegin(), timeUnitNames_.cend(), resultUnit) ==
+        timeUnitNames_.cend())
     {
         std::string validTimeUnitNames;
-        for (const auto& unit : validTimeUnitNames_)
+        for (const auto& unit : timeUnitNames_)
             validTimeUnitNames += unit + ",";
         validTimeUnitNames.pop_back();
 

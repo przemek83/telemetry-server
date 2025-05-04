@@ -38,6 +38,5 @@ private:
     static constexpr int SECONDS_INDEX{0};
     static constexpr int MILISECONDS_INDEX{SECONDS_INDEX + 1};
 
-    const std::vector<std::string> validTimeUnitNames_{"seconds",
-                                                       "milliseconds"};
+    const std::vector<std::string> timeUnitNames_{"seconds", "milliseconds"};
 };
