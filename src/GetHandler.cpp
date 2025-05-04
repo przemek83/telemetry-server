@@ -14,7 +14,7 @@ void GetHandler::processEvent(const httplib::Request& req,
 {
     logger_.info("start GET " + req.path);
 
-    std::string event{req.path_params.at("event")};
+    const std::string event{req.path_params.at("event")};
 
     if (!isValidEventName(event))
     {
@@ -66,7 +66,7 @@ std::pair<bool, std::string> GetHandler::getResultUnit(
         return {false, ""};
     }
 
-    std::string resultUnit{req.get_param_value("resultUnit")};
+    const std::string resultUnit{req.get_param_value("resultUnit")};
     if (std::find(timeUnitNames_.cbegin(), timeUnitNames_.cend(), resultUnit) ==
         timeUnitNames_.cend())
     {
