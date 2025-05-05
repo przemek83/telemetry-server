@@ -12,6 +12,6 @@ public:
 
     void error([[maybe_unused]] const std::string& message) override
     {
-        // skip logging}
+        // skip logging
     }
 };
