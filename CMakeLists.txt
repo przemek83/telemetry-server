@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(callstack
+project(telemetry-server
     LANGUAGES CXX
     VERSION 1.0.0
-    DESCRIPTION "Interview task for Callstack"
-    HOMEPAGE_URL "https://github.com/przemek83/callstack")
+    DESCRIPTION "Telemetry server for event tracking and analytics"
+    HOMEPAGE_URL "https://github.com/przemek83/telemetry-server")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
