@@ -29,7 +29,11 @@ Key features:
 - **Cross-platform**: Tested on Linux and Windows
 
 # Building
-TODO
+Clone and use CMake directly or via any IDE supporting it. CMake **should**:
++ configure everything automatically,
++ compile and create binaries.
+
+As a result of compilation, binary for server and binary for testing should be created.
 
 ## Used tools and libraries for the C++ part
 | Tool |  Windows | Ubuntu |
