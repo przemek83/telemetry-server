@@ -1,3 +1,8 @@
+[![Build & test](https://github.com/przemek83/telemetry-server/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/przemek83/telemetry-server/actions/workflows/build-and-test.yml)
+[![CodeQL](https://github.com/przemek83/telemetry-server/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/przemek83/telemetry-server/actions/workflows/github-code-scanning/codeql)
+[![codecov](https://codecov.io/gh/przemek83/telemetry-server/graph/badge.svg?token=92ZWCFCNBQ)](https://codecov.io/gh/przemek83/telemetry-server)
+
+
 # Table of content
 - [About project](#about-project)
 - [Building](#building)
