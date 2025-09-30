@@ -87,7 +87,14 @@ TODO
 TODO
 
 # Licensing
-TODO
+Software is released under the MIT license.
+
+The project uses the following open-source software:
+| Name | License | Home | Description |
+| --- | --- | --- | --- |
+| Catch2 | BSL-1.0 | https://github.com/catchorg/Catch2 | testing framework for C++ |
+| cpp-httplib | MIT | https://github.com/yhirose/cpp-httplib | HTTP/HTTPS server and client library |
+| json | MIT | https://github.com/nlohmann/json| JSON library |
 
 # Testing
 TODO
