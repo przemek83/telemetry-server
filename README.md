@@ -2,6 +2,11 @@
 [![CodeQL](https://github.com/przemek83/telemetry-server/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/przemek83/telemetry-server/actions/workflows/github-code-scanning/codeql)
 [![codecov](https://codecov.io/gh/przemek83/telemetry-server/graph/badge.svg?token=92ZWCFCNBQ)](https://codecov.io/gh/przemek83/telemetry-server)
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=przemek83_telemetry-server&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=przemek83_telemetry-server)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=przemek83_telemetry-server&metric=bugs)](https://sonarcloud.io/summary/new_code?id=przemek83_telemetry-server)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=przemek83_telemetry-server&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=przemek83_telemetry-server)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=przemek83_telemetry-server&metric=coverage)](https://sonarcloud.io/summary/new_code?id=przemek83_telemetry-server)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=przemek83_telemetry-server&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=przemek83_telemetry-server)
 
 # Table of content
 - [About project](#about-project)
