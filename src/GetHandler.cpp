@@ -99,7 +99,8 @@ std::pair<bool, int> GetHandler::getDate(const httplib::Request& req,
     const auto [mismatch, errorCode]{
         std::from_chars(value.data(), value.data() + value.size(), date)};
 
-    if (errorCode != std::errc() || mismatch != (value.data() + value.size()))
+    if ((errorCode != std::errc()) ||
+        (mismatch != (value.data() + value.size())))
     {
         std::string errorMessage{"Invalid value for '" + paramName +
                                  "': " + value + ". Expected an integer."};
