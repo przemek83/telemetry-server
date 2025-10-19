@@ -47,15 +47,15 @@ std::function<bool(int)> Telemetry::createFilter(int fromDate, int toDate)
     std::function<bool(int)> dateFilter{[]([[maybe_unused]] int date)
                                         { return true; }};
 
-    if (haveFrom && !haveTo)
+    if (haveFrom && (!haveTo))
         dateFilter = [from = fromDate](int date) { return date >= from; };
 
-    if (!haveFrom && haveTo)
+    if ((!haveFrom) && haveTo)
         dateFilter = [to = toDate](int date) { return date <= to; };
 
     if (haveFrom && haveTo)
         dateFilter = [from = fromDate, to = toDate](int date)
-        { return date >= from && date <= to; };
+        { return (date >= from) && (date <= to); };
 
     return dateFilter;
 }
