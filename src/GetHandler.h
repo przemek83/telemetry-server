@@ -17,9 +17,9 @@ public:
 private:
     struct RequestParams
     {
-        std::string telemetryUnit;
-        int startDate{Telemetry::DATE_NOT_SET};
-        int endDate{Telemetry::DATE_NOT_SET};
+        std::string telemetryUnit_;
+        int startDate_{Telemetry::DATE_NOT_SET};
+        int endDate_{Telemetry::DATE_NOT_SET};
     };
 
     std::pair<bool, RequestParams> parseRequest(const httplib::Request& req,
