@@ -37,7 +37,10 @@ int Telemetry::compute(const std::map<int, std::vector<int>>& entries,
         }
     }
 
-    return (count == 0) ? 0 : (sum / count);
+    if (count == 0)
+        return 0;
+
+    return sum / count;
 }
 
 std::function<bool(int)> Telemetry::createFilter(int fromDate, int toDate)
