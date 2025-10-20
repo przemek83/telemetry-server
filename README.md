@@ -47,8 +47,8 @@ As a result of compilation, binary for server and binary for testing should be c
 ## Used tools and libraries for the C++ part
 | Tool |  Windows | Ubuntu |
 | --- | --- | --- |
-| OS version | 10 22H2 | 24.04 |
-| GCC | 13.1.0 | 13.3.0 |
+| OS version | 11 24H2 | 24.04 |
+| Compiler | MSVC 2019 | GCC 13.3.0 |
 | CMake | 3.30.2 | 3.28.3 |
 | Git | 2.46.0 | 2.43.0 |
 | httplib | 0.26.0 | 0.26.0 |
