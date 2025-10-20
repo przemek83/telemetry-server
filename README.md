@@ -143,22 +143,74 @@ curl -X GET "localhost:8080/paths/start/meanLength?resultUnit=milliseconds"
 ```
 
 # Configuration
-TODO
+The telemetry server can be configured by modifying the source code. Currently, the server settings are hardcoded in `main.cpp`.
 
 ## Server Settings
-TODO
+Default configuration:
+- **Address**: `0.0.0.0` (listens on all interfaces)
+- **Port**: `8080`
+- **Threading**: Single-threaded HTTP server
+- **Data Storage**: In-memory storage (data is lost on server restart)
+
+To modify server settings, edit the following variables in `src/main.cpp`:
+```cpp
+std::string address("0.0.0.0");
+const int port{8080};
+```
 
 ## Logging
-TODO
+The server uses a simple logging system that outputs to stdout. Log levels include:
+- **[INFO]**: Server startup, request processing
+- **[ERRO]**: Server startup failures, request errors
+
+Example log:
+```
+[INFO]: Starting server on 0.0.0.0:8080
+[INFO]: start POST /paths/start, body={"date": 1234567890, "values": [100, 200, 150, 300]}
+[INFO]: end POST /paths/start
+[INFO]: start GET /paths/start/meanLength
+[INFO]: end GET /paths/start/meanLength: computed mean = 187
+[INFO]: start GET /paths/start/meanLength
+[ERRO]: Parameter 'resultUnit' is missing
+```
 
 # Architecture
-TODO
+The telemetry server follows a modular architecture with clear separation of concerns between HTTP handling, data processing, and storage.
 
 ## Components
-TODO
+
+### Core Components
+- **`main.cpp`**: Server entry point, HTTP server setup, and route registration
+- **`Telemetry`**: Core data storage and computation engine
+- **`EventHandler`**: Base class for HTTP request handling
+- **`PostHandler`**: Handles POST requests for data submission
+- **`GetHandler`**: Handles GET requests for data queries
+- **`SimpleLogger`**: Logging implementation
+
+### Dependencies
+- **httplib**: HTTP server and client library
+- **nlohmann/json**: JSON parsing and serialization
+- **Catch2**: Unit testing framework
 
 ## Data Flow
-TODO
+
+### Data Submission Flow
+1. Client sends POST request to `/paths/:event`
+2. `PostHandler` validates event name and parses JSON payload
+3. Data is stored in `Telemetry` class with thread-safe access
+4. Response sent back to client
+
+### Data Query Flow
+1. Client sends GET request to `/paths/:event/meanLength`
+2. `GetHandler` validates parameters and parses query string
+3. `Telemetry` computes mean value with optional date filtering
+4. Result is converted to appropriate time unit (seconds/milliseconds)
+5. JSON response sent back to client
+
+### Thread Safety
+- All data access is protected by `std::shared_mutex`
+- Read operations use shared locks for concurrent access
+- Write operations use exclusive locks for data integrity
 
 # Licensing
 Software is released under the MIT license.
