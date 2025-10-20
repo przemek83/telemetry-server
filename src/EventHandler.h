@@ -21,7 +21,7 @@ public:
                               httplib::Response& res) = 0;
 
 protected:
-    static bool isValidEventName(const std::string& event);
+    static bool isValidEventName(std::string_view event);
 
     void raiseError(httplib::Response& res, const std::string& errorMessage);
 
