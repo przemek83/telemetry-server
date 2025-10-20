@@ -33,13 +33,15 @@ TEST_CASE("PostHandler Tests", "[rest-server]")
         request.body = createPayload(1, {3, 45, 78, 3});
         postHandler.processEvent(request, response);
         REQUIRE(response.status == httplib::StatusCode::OK_200);
-        REQUIRE(telemetry.computeMean(eventName) == 32);
+        REQUIRE(telemetry.computeMean(eventName, Telemetry::DATE_NOT_SET,
+                                      Telemetry::DATE_NOT_SET) == 32);
 
         request.path_params["event"] = eventName;
         request.body = createPayload(2, {23, 43, 123, 13});
         postHandler.processEvent(request, response);
         REQUIRE(response.status == httplib::StatusCode::OK_200);
-        REQUIRE(telemetry.computeMean(eventName) == 41);
+        REQUIRE(telemetry.computeMean(eventName, Telemetry::DATE_NOT_SET,
+                                      Telemetry::DATE_NOT_SET) == 41);
     }
 
     SECTION("Invalid payload handling")

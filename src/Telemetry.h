@@ -12,8 +12,7 @@ public:
     void addEntry(const std::string& name, int date,
                   const std::vector<int>& values);
 
-    int computeMean(const std::string& name, int fromDate = DATE_NOT_SET,
-                    int toDate = DATE_NOT_SET);
+    int computeMean(const std::string& name, int fromDate, int toDate);
 
     static const int DATE_NOT_SET{-1};
 

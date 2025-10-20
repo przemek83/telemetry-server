@@ -10,12 +10,17 @@ TEST_CASE("Telemetry", "[rest-server]")
     const std::vector<int> firstSet{0, 10};
     const int DATE_NOT_SET{Telemetry::DATE_NOT_SET};
 
-    SECTION("Mean on empty") { REQUIRE(telemetry.computeMean(eventName) == 0); }
+    SECTION("Mean on empty")
+    {
+        REQUIRE(telemetry.computeMean(eventName, Telemetry::DATE_NOT_SET,
+                                      Telemetry::DATE_NOT_SET) == 0);
+    }
 
     SECTION("Meam after adding first set")
     {
         telemetry.addEntry(eventName, 1, firstSet);
-        REQUIRE(telemetry.computeMean(eventName) == 5);
+        REQUIRE(telemetry.computeMean(eventName, Telemetry::DATE_NOT_SET,
+                                      Telemetry::DATE_NOT_SET) == 5);
     }
 
     SECTION("Meam on empty range after adding first set")
@@ -33,14 +38,16 @@ TEST_CASE("Telemetry", "[rest-server]")
     SECTION("Meam from date after adding first set")
     {
         telemetry.addEntry(eventName, 1, firstSet);
-        REQUIRE(telemetry.computeMean(eventName, 1) == 5);
+        REQUIRE(telemetry.computeMean(eventName, 1, Telemetry::DATE_NOT_SET) ==
+                5);
     }
 
     SECTION("Mean after adding multiple entries for the same date")
     {
         telemetry.addEntry(eventName, 1, {10, 20});
         telemetry.addEntry(eventName, 1, {30, 40});
-        REQUIRE(telemetry.computeMean(eventName) == 25);
+        REQUIRE(telemetry.computeMean(eventName, Telemetry::DATE_NOT_SET,
+                                      Telemetry::DATE_NOT_SET) == 25);
     }
 
     SECTION("Mean with non-overlapping date ranges")
@@ -65,7 +72,8 @@ TEST_CASE("Telemetry", "[rest-server]")
         telemetry.addEntry(eventName, 1, {10, 20});
         telemetry.addEntry(eventName, 2, {30, 40});
         telemetry.addEntry(eventName, 3, {50, 60});
-        REQUIRE(telemetry.computeMean(eventName, 1) == 35);
+        REQUIRE(telemetry.computeMean(eventName, 1, Telemetry::DATE_NOT_SET) ==
+                35);
     }
 
     SECTION("Mean to date for multiple sets")
@@ -88,8 +96,10 @@ TEST_CASE("Telemetry", "[rest-server]")
     {
         telemetry.addEntry(eventName, 1, {10, 20});
         telemetry.addEntry(otherEventName, 1, {30, 40});
-        REQUIRE(telemetry.computeMean(eventName) == 15);
-        REQUIRE(telemetry.computeMean(otherEventName) == 35);
+        REQUIRE(telemetry.computeMean(eventName, Telemetry::DATE_NOT_SET,
+                                      Telemetry::DATE_NOT_SET) == 15);
+        REQUIRE(telemetry.computeMean(otherEventName, Telemetry::DATE_NOT_SET,
+                                      Telemetry::DATE_NOT_SET) == 35);
     }
 
     SECTION("Mean with entries spanning multiple dates")
@@ -97,6 +107,7 @@ TEST_CASE("Telemetry", "[rest-server]")
         telemetry.addEntry(eventName, 1, {10, 20});
         telemetry.addEntry(eventName, 2, {30, 40});
         telemetry.addEntry(eventName, 3, {50, 60});
-        REQUIRE(telemetry.computeMean(eventName) == 35);
+        REQUIRE(telemetry.computeMean(eventName, Telemetry::DATE_NOT_SET,
+                                      Telemetry::DATE_NOT_SET) == 35);
     }
 }
