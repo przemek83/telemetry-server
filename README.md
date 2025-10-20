@@ -15,7 +15,6 @@
 - [Usage](#usage)
    * [API Endpoints](#api-endpoints)
    * [Request Examples](#request-examples)
-   * [Response Format](#response-format)
 - [Configuration](#configuration)
    * [Server Settings](#server-settings)
    * [Logging](#logging)
@@ -37,7 +36,7 @@ Key features:
 - **Statistical analysis**: Compute mean values from collected data
 - **JSON support**: Full JSON request/response handling
 - **Cross-platform**: Tested on Linux and Windows
-
+  
 # Building
 Clone and use CMake directly or via any IDE supporting it. CMake **should**:
 + configure everything automatically,
@@ -54,19 +53,94 @@ As a result of compilation, binary for server and binary for testing should be c
 | Git | 2.46.0 | 2.43.0 |
 | httplib | 0.14.0 | 0.14.0 |
 | nlohmann/json | 3.11.0 | 3.11.0 |
-| Catch2 | 3.3.0 | 3.3.0 |
+| Catch2 | 3.3.0 | 3.3.0 | 
 
 # Usage
-TODO
+The telemetry server provides a simple HTTP API for collecting and querying telemetry data. The server runs on `localhost:8080` by default and accepts JSON requests.
+
+## Starting the Server
+Build and run the server:
+```bash
+./telemetry-server
+```
+
+The server will start and listen on `0.0.0.0:8080`. You'll see a log message confirming the server is running:
+```bash
+$ <path>/telemetry-server/build/telemetry-server
+[INFO]: Starting server on 0.0.0.0:8080
+```
 
 ## API Endpoints
-TODO
+
+### POST /paths/:event
+Submit telemetry data for a specific event.
+
+**Parameters:**
+- `:event` - Event name (path parameter)
+
+**Request Body:**
+```json
+{
+  "date": 1234567890,
+  "values": [100, 200, 150, 300]
+}
+```
+
+**Response:**
+- `200 OK` - Data successfully recorded
+- `400 Bad Request` - Invalid JSON or missing required fields
+
+### GET /paths/:event/meanLength
+Retrieve the mean value for a specific event.
+
+**Parameters:**
+- `:event` - Event name (path parameter)
+- `resultUnit` - Time unit for the result (`seconds` or `milliseconds`)
+- `startTimestamp` (optional) - Start date filter
+- `endTimestamp` (optional) - End date filter
+
+**Response:**
+```json
+{
+  "mean": 187
+}
+```
 
 ## Request Examples
-TODO
 
-## Response Format
-TODO
+### Submit Telemetry Data
+**Request**
+```bash
+curl -X POST --json '{"date": 1234567890, "values": [100, 200, 150, 300]}' localhost:8080/paths/start
+```
+**Response:**
+```json
+{}
+```
+
+### Query Mean Value
+**Request**
+```bash
+curl -X GET "localhost:8080/paths/start/meanLength?resultUnit=seconds&startTimestamp=1&endTimestamp=1234567890"
+```
+**Response:**
+```json
+{
+  "mean": 187
+}
+```
+
+### Query with Milliseconds
+**Request**
+```bash
+curl -X GET "localhost:8080/paths/start/meanLength?resultUnit=milliseconds"
+```
+**Response:**
+```json
+{
+  "mean": 187000
+}
+```
 
 # Configuration
 TODO
