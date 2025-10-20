@@ -102,7 +102,7 @@ Retrieve the mean value for a specific event.
 **Response:**
 ```json
 {
-  "mean": 187
+  "mean": <value>
 }
 ```
 
