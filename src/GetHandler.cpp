@@ -45,16 +45,26 @@ std::pair<bool, GetHandler::RequestParams> GetHandler::parseRequest(
     if (!success)
         return {false, {}};
 
-    const auto [successStartDate,
-                startDate]{getDate(req, "startTimestamp", res)};
-    if (!successStartDate)
-        return {false, {}};
-
-    const auto [successEndDate, endDate]{getDate(req, "endTimestamp", res)};
-    if (!successEndDate)
+    const auto [successDates, startDate, endDate]{getDates(req, res)};
+    if (!successDates)
         return {false, {}};
 
     return {true, {resultUnit, startDate, endDate}};
+}
+
+std::tuple<bool, int, int> GetHandler::getDates(const httplib::Request& req,
+                                                httplib::Response& res)
+{
+    const auto [successStartDate,
+                startDate]{getDate(req, "startTimestamp", res)};
+    if (!successStartDate)
+        return {false, {}, {}};
+
+    const auto [successEndDate, endDate]{getDate(req, "endTimestamp", res)};
+    if (!successEndDate)
+        return {false, {}, {}};
+
+    return {true, startDate, endDate};
 }
 
 std::pair<bool, std::string> GetHandler::getResultUnit(

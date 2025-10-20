@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <tuple>
 #include <vector>
 
 #include "EventHandler.h"
@@ -24,6 +25,9 @@ private:
 
     std::pair<bool, RequestParams> parseRequest(const httplib::Request& req,
                                                 httplib::Response& res);
+
+    std::tuple<bool, int, int> getDates(const httplib::Request& req,
+                                        httplib::Response& res);
 
     std::pair<bool, std::string> getResultUnit(const httplib::Request& req,
                                                httplib::Response& res);
