@@ -45,6 +45,16 @@ std::tuple<bool, int, std::vector<int>> PostHandler::parsePayload(
         return {false, 0, {}};
     }
 
+    const auto [success, date, values]{parseData(parsedData, res)};
+    if (!success)
+        return {false, 0, {}};
+
+    return {true, date, values};
+}
+
+std::tuple<bool, int, std::vector<int>> PostHandler::parseData(
+    const nlohmann::json& parsedData, httplib::Response& res)
+{
     const auto [valuesOK, values]{parseValues(parsedData, res)};
     if (!valuesOK)
         return {false, 0, {}};
