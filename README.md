@@ -48,12 +48,12 @@ As a result of compilation, binary for server and binary for testing should be c
 | Tool |  Windows | Ubuntu |
 | --- | --- | --- |
 | OS version | 10 22H2 | 24.04 |
-| GCC | 13.1.0 | 13.2.0 |
+| GCC | 13.1.0 | 13.3.0 |
 | CMake | 3.30.2 | 3.28.3 |
 | Git | 2.46.0 | 2.43.0 |
-| httplib | 0.14.0 | 0.14.0 |
-| nlohmann/json | 3.11.0 | 3.11.0 |
-| Catch2 | 3.3.0 | 3.3.0 | 
+| httplib | 0.26.0 | 0.26.0 |
+| nlohmann/json | 3.12.0 | 3.12.0 |
+| Catch2 | 3.11.0 | 3.11.0 | 
 
 # Usage
 The telemetry server provides a simple HTTP API for collecting and querying telemetry data. The server runs on `localhost:8080` by default and accepts JSON requests.
