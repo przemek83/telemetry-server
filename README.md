@@ -236,7 +236,7 @@ As an alternative, CTest can be used to run tests:
 
 ```
 $ ctest
-Test project <path>>/telemetry-server/build/tests
+Test project <path>/telemetry-server/build/tests
     Start 1: Telemetry
 1/3 Test #1: Telemetry ........................   Passed    0.00 sec
     Start 2: PostHandler Tests
