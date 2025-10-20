@@ -1,5 +1,7 @@
 #include "EventHandler.h"
 
+#include <locale>
+
 #include <httplib.h>
 #include <string_view>
 
@@ -12,7 +14,7 @@ bool EventHandler::isValidEventName(std::string_view event)
 {
     return (!event.empty()) &&
            std::all_of(event.cbegin(), event.cend(),
-                       [](unsigned char c) { return std::isalnum(c); });
+                       [](char c) { return std::isalnum(c, std::locale{}); });
 }
 void EventHandler::raiseError(httplib::Response& res,
                               const std::string& errorMessage)
