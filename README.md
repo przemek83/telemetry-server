@@ -171,4 +171,28 @@ The project uses the following open-source software:
 | json | MIT | https://github.com/nlohmann/json| JSON library |
 
 # Testing
-TODO
+For testing of code logic, there is a responsible `Catch2` framework. As it is well integrated with `CMake` it should be straightforward to use. As the first step, build the project. Make sure that the `telemetry-server-tests` target is built. Modern IDEs supporting CMake also support running tests with monitoring of failures. But in case you would like to run it manually, go to the `build\tests` directory, where the⁣ binary `telemetry-server-tests` should be available after building. Calling it directly should produce the following output on Linux:
+
+```
+$ ./telemetry-server-tests 
+Randomness seeded to: 2788417184
+===============================================================================
+All tests passed (62 assertions in 3 test cases)
+```
+
+As an alternative, CTest can be used to run tests:
+
+```
+$ ctest
+Test project <path>>/telemetry-server/build/tests
+    Start 1: Telemetry
+1/3 Test #1: Telemetry ........................   Passed    0.00 sec
+    Start 2: PostHandler Tests
+2/3 Test #2: PostHandler Tests ................   Passed    0.00 sec
+    Start 3: GetHandler Tests
+3/3 Test #3: GetHandler Tests .................   Passed    0.00 sec
+
+100% tests passed, 0 tests failed out of 3
+
+Total Test time (real) =   0.02 sec
+```
